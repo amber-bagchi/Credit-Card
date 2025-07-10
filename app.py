@@ -30,26 +30,30 @@ def predict(input_data):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     predictions = None
+    error = None
 
     if request.method == 'POST':
         if 'input_file' not in request.files:
-            return render_template('index.html', predictions={"Error": "No file uploaded"})
+            error = "No file uploaded"
+            return render_template('index.html', predictions=predictions, error=error)
 
         file = request.files['input_file']
 
         if file.filename == '':
-            return render_template('index.html', predictions={"Error": "No file selected"})
+            error = "No file selected"
+            return render_template('index.html', predictions=predictions, error=error)
 
         try:
             # Read CSV file into a DataFrame
             df = pd.read_csv(file)
         except pd.errors.EmptyDataError:
-            return render_template('index.html', predictions={"Error": "Empty file"})
+            error = "Empty file"
+            return render_template('index.html', predictions=predictions, error=error)
 
         # Perform prediction
         predictions = {"Row " + str(i + 1): "Fraud" if pred == 1 else "Not Fraud" for i, pred in enumerate(predict(df))}
 
-    return render_template('index.html', predictions=predictions)
+    return render_template('index.html', predictions=predictions, error=error)
 
 if __name__ == '__main__':
     app.run(debug=True)

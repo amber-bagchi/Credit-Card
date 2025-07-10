@@ -94,6 +94,10 @@
         <button type="submit">Predict</button>
     </form>
 
+    {% if error %}
+        <h2 style="color: red;">{{ error }}</h2>
+    {% endif %}
+
     {% if predictions %}
         <h2>Prediction Results:</h2>
         <table>
